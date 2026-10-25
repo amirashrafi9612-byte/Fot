@@ -1,0 +1,406 @@
+<!DOCTYPE html><html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Depth of Field</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#070a08">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;800&family=Montserrat:wght@500;700&display=swap">
+<style>
+:root{--bg:#070a08;--card:#121815;--card2:#0a0d0b;--line:#243229;--tx:#e8efe9;--mut:#8fa095;--ac:#a6e22e;--ac2:#c8ff3d;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(120% 60% at 50% 0,#16210f 0,var(--bg) 60%) var(--bg);color:var(--tx);font:14px/1.5 'Montserrat','Vazirmatn',system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:var(--tx);cursor:pointer}
+.wrap{max-width:560px;margin:auto;padding:12px 14px 40px}
+.hdr{display:flex;align-items:center;gap:12px;padding:2px 2px 8px}
+.logo{width:64px;height:64px;flex:none}.sc{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}.big{width:min(52vw,220px);height:min(52vw,220px)}.sc b{font:700 22px Montserrat,sans-serif;letter-spacing:.3em;margin-inline-end:-.3em}.sc span{color:var(--ac);font:500 8.5px Montserrat,sans-serif;letter-spacing:.26em;margin-top:-6px}.sc em{font:500 7px Montserrat,sans-serif;letter-spacing:.3em;color:var(--mut);font-style:normal;margin-top:8px}.tl{margin-top:30px;text-align:center}.tl small{display:block;color:var(--mut);font:500 10px Montserrat,sans-serif;letter-spacing:.3em}.tl b{font:700 42px Montserrat,sans-serif;color:var(--ac2);letter-spacing:.03em}.tk{display:flex;gap:5px;justify-content:center;margin-top:10px}.tk i{width:14px;height:3px;border-radius:2px;background:#ffffff22;transition:background .2s}.tk i.on{background:var(--ac)}
+.hdr b{display:block;font:700 19px Montserrat,sans-serif;letter-spacing:.14em;direction:ltr;text-align:left}
+.hdr span{display:block;color:var(--ac);font:500 9.5px Montserrat,sans-serif;letter-spacing:.14em;direction:ltr;text-align:left;margin-top:2px}
+.tabs{display:flex;gap:5px;margin-bottom:10px;overflow-x:auto;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}
+.tabs button{flex:1 0 auto;padding:10px 12px;white-space:nowrap;border-radius:14px;border:1px solid var(--line);background:var(--card);font-size:10.5px;font-weight:600;letter-spacing:0}
+.on{border-color:var(--ac)!important;color:var(--ac)!important;background:#19220f!important}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:12px;margin-bottom:10px}
+h2{margin:0 0 6px;font-size:18px;color:var(--ac)}
+label{display:flex;justify-content:space-between;align-items:baseline;color:var(--mut);font-size:12px;margin:10px 0 4px}
+label b{color:var(--ac);font:600 17px Montserrat,sans-serif;direction:ltr}
+select,input[type=number],input[type=text]{width:100%;padding:12px;border-radius:14px;border:1px solid var(--line);background:var(--card2);color:var(--tx);font:inherit}
+input[type=range]{width:100%;direction:ltr;accent-color:var(--ac);margin:4px 0}
+.seg{display:flex;gap:6px}
+.seg button,.chip{flex:1;padding:8px 10px;border-radius:12px;border:1px solid var(--line);background:var(--card2);font-size:13px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.chip{flex:none;min-width:50px;direction:ltr;font-family:Montserrat,sans-serif}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.kv{background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.kv small{color:var(--mut);font-size:12px;display:block}
+.kv b{display:block;font:700 20px Montserrat,sans-serif;color:var(--ac2);direction:ltr;text-align:left}
+.tw{overflow-x:auto;margin-top:10px;border:1px solid var(--line);border-radius:14px}
+table{border-collapse:collapse;width:100%;font:12.5px Montserrat,Vazirmatn,sans-serif;direction:ltr;text-align:center;white-space:nowrap}
+th,td{padding:8px 9px;border-bottom:1px solid var(--line)}
+th{color:var(--mut);font-weight:600;background:var(--card2)}
+td:first-child,th:first-child{text-align:left;color:var(--tx)}
+tr.me td{background:#19220f;color:var(--ac2)}
+td.me{background:#19220f;color:var(--ac2)}
+td.dim{color:#4a5a50}
+.btn{width:100%;padding:13px;border-radius:16px;border:0;background:var(--ac);color:#0b1005;font-weight:800;font-size:15px;margin-top:12px}
+.mut{color:var(--mut);font-size:12px}
+.row{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line)}
+.row small{color:var(--mut);direction:ltr;display:block;text-align:left}
+.x{background:none;border:1px solid var(--line);border-radius:10px;padding:4px 10px;color:#ff8a7a;font-size:12px}
+.ld{background:none;border:1px solid var(--ac);border-radius:10px;padding:4px 12px;color:var(--ac);font-size:12px}
+.grp{color:var(--ac);font-size:13px;margin:14px 0 2px}
+.frm{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.frm .w{grid-column:1/3}
+svg{width:100%;height:auto;display:block;margin-top:10px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:19}
+#stk{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;display:grid;grid-template-columns:repeat(4,1fr) auto;gap:6px;align-items:center;background:#0b110df0;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:16px;padding:8px 10px;margin-bottom:10px}
+.sk small{display:block;color:var(--mut);font-size:11px}
+.seg.u{grid-row:1;grid-column:5}#dg{grid-column:1/-1}#dg svg{margin-top:0;max-height:48px}#dg p{margin:0;font-size:11px;direction:ltr}
+.sk b{display:block;font:700 14px Montserrat,sans-serif;color:var(--ac2);direction:ltr;text-align:left}
+.seg.u{flex-direction:column;gap:3px}.seg.u button{padding:3px 9px;font-size:12px;font-family:Montserrat,sans-serif}
+.hp{margin:8px 0;font-size:12.5px;color:var(--mut)}.hp summary{color:var(--ac);cursor:pointer}.hp p{margin:6px 0 0;line-height:1.8}
+#splash{position:fixed;inset:0;z-index:50;background:radial-gradient(90% 55% at 50% 40%,#16210f,#050705 70%);transition:opacity .8s}
+#splash.out{opacity:0;pointer-events:none}
+.sb{position:absolute;bottom:calc(env(safe-area-inset-bottom,0px) + 40px);left:22%;right:22%;height:3px;background:#ffffff22;border-radius:3px;overflow:hidden}
+.sb i{display:block;height:100%;width:0;background:var(--ac);animation:ld 2.2s ease forwards}
+@keyframes ld{to{width:100%}}
+@media(prefers-reduced-motion:reduce){.sb i{animation-duration:.1s}#splash{transition:none}}
+#learn{font-family:Vazirmatn,sans-serif;line-height:1.9;font-size:14px}#learn h3{color:var(--ac);margin:0 0 6px;font-size:16px}#learn details{border-bottom:1px solid var(--line);padding:8px 0}#learn summary{cursor:pointer;font-weight:600}#learn p{color:#cdd8cf;margin:6px 0}#learn code{direction:ltr;unicode-bidi:isolate;display:inline-block;color:var(--ac2);font-family:Montserrat,sans-serif;font-size:13px}#learn .mut{font-size:13px}#fsel,#fnum{margin-top:0}
+.gd{border-bottom:1px solid var(--line);padding:6px 0}.gd summary{cursor:pointer;display:flex;flex-direction:column;gap:2px;padding:6px 0}.gd summary b{font-size:14px}.gd summary span{color:var(--mut);font-size:11.5px}
+.ls{width:100%;max-width:260px;height:auto;margin:6px 0}.sp td:last-child{text-align:left;color:var(--tx)}.sp td:first-child{color:var(--mut)}.sp td{white-space:normal}
+.gd ul{margin:8px 0;padding-left:18px;color:#cdd8cf;font-size:12.5px}.gd .ld{margin-top:6px}.an{width:100%;height:auto;margin:4px 0}.ls{max-width:340px}.al{margin:6px 0 0;padding-left:20px;font-size:12.5px;color:#cdd8cf}
+[hidden]{display:none!important}
+.vbtn{margin-left:auto;background:none;border:1px solid var(--ac);color:var(--ac);border-radius:12px;padding:8px 12px;font:600 10.5px Montserrat,sans-serif;letter-spacing:.14em}
+#vf{position:fixed;inset:0;z-index:40;background:#000;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);font-family:Montserrat,sans-serif;color:#fff}
+.vtop{display:flex;justify-content:space-between;gap:10px;padding:8px 14px}.vtop b{display:block;font-size:13px;letter-spacing:.05em}.vtop small{color:var(--ac);font-size:11px;letter-spacing:.06em}
+#vstage{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;position:relative}
+#vfr{position:relative;overflow:hidden;background:#0b0f0c;outline:1px solid #ffffff55}
+#vfr video,#vfr img{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);max-width:none;max-height:none}
+#vfr .sf,#vfr .cx{position:absolute;pointer-events:none;display:none}
+#vfr.g2 .sf{display:block;inset:5%;border:1px dashed #ffffff88}
+#vfr.g2 .cx{display:block;left:50%;top:50%;width:18px;height:18px;margin:-9px;background:linear-gradient(#fff,#fff) center/1px 100% no-repeat,linear-gradient(#fff,#fff) center/100% 1px no-repeat}
+#vfr.g1::after,#vfr.g2::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent calc(33.3% - .5px),#fff6 0 calc(33.3% + .5px),transparent 0 calc(66.6% - .5px),#fff6 0 calc(66.6% + .5px),transparent 0),linear-gradient(transparent calc(33.3% - .5px),#fff6 0 calc(33.3% + .5px),transparent 0 calc(66.6% - .5px),#fff6 0 calc(66.6% + .5px),transparent 0)}
+#vrl{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border:2px solid #ff2a2a;box-shadow:0 0 0 999px #000a;pointer-events:none;width:100%;height:100%}
+#vrt{position:absolute;top:3px;left:6px;color:#ff4a4a;font-size:10px;font-weight:600;letter-spacing:.1em}
+#vwarn,#vmsg{position:absolute;left:12px;right:12px;top:8px;background:#000c;color:var(--ac2);font-size:11px;padding:6px 10px;border-radius:10px;text-align:center;z-index:2}#vmsg{top:auto;bottom:8px}
+.vbot{background:#0b0f0c;border-top:1px solid var(--line);padding:8px 12px 10px;display:flex;flex-direction:column;gap:8px}
+.vsc{display:flex;gap:6px;overflow-x:auto}.vsc .chip{flex:none}
+.vrow{display:flex;gap:8px;align-items:center}.vrow>*{min-width:0;flex:1}.vrow select{padding:9px;font-size:12px}
+.vrow button,.vb{flex:none;border:1px solid var(--line);background:var(--card2);border-radius:10px;padding:9px 10px;font-size:12px;white-space:nowrap}
+.vexit{border-color:#ff8a7a!important;color:#ff8a7a!important}
+.wr{color:#ffb86b;font-size:12px;margin:0 0 8px}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="mg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4f7f2"/><stop offset=".55" stop-color="#8d978f"/><stop offset="1" stop-color="#3b443d"/></linearGradient><symbol id="lg" viewBox="0 0 120 120"><circle cx="60" cy="60" r="55" fill="none" stroke="url(#mg)" stroke-width="7"/><g fill="url(#mg)" stroke="#05070a" stroke-width=".9" stroke-linejoin="round"><polygon points="60.0,17.0 87.6,27.1 105.0,36.1 79.1,12.7"/><polygon points="87.6,27.1 102.3,52.5 109.9,70.6 105.0,36.1"/><polygon points="102.3,52.5 97.2,81.5 91.4,100.2 109.9,70.6"/><polygon points="97.2,81.5 74.7,100.4 58.2,111.0 91.4,100.2"/><polygon points="74.7,100.4 45.3,100.4 25.9,97.9 58.2,111.0"/><polygon points="45.3,100.4 22.8,81.5 9.5,67.1 25.9,97.9"/><polygon points="22.8,81.5 17.7,52.5 16.7,33.0 9.5,67.1"/><polygon points="17.7,52.5 32.4,27.1 44.2,11.5 16.7,33.0"/><polygon points="32.4,27.1 60.0,17.0 79.1,12.7 44.2,11.5"/></g><text x="60" y="50" text-anchor="middle" font-family="Montserrat,sans-serif" font-weight="700" font-size="12.5" letter-spacing="1.4" fill="#fff">DEPTH</text><text x="60" y="64.5" text-anchor="middle" font-family="Montserrat,sans-serif" font-weight="700" font-size="12.5" letter-spacing="1.4" fill="#fff">OF</text><text x="60" y="79" text-anchor="middle" font-family="Montserrat,sans-serif" font-weight="700" font-size="12.5" letter-spacing="1.4" fill="#fff">FIELD</text></symbol></defs></svg><div id="splash"><div class="sc"><svg id="ir" class="big" viewBox="0 0 120 120" role="img" aria-label="Aperture"><circle cx="60" cy="60" r="55" fill="none" stroke="url(#mg)" stroke-width="7"/><g fill="url(#mg)" stroke="#05070a" stroke-width=".9" stroke-linejoin="round"></g></svg><b>DEPTH OF FIELD</b><em>DESIGNED &amp; BUILT BY</em><span>AMIR HOSEIN SEIF ASHRAFI</span><div class="tl"><small>T-STOP</small><b id="tn">T1.3</b><div class="tk" id="tk"></div></div></div></div>
+<div class="wrap">
+<header class="hdr"><svg class="logo" role="img" aria-label="Depth of Field"><use href="#lg"/></svg><div><b>DEPTH OF FIELD</b><span>amir hosein seif ashrafi</span></div><button class="vbtn" data-a="vopen">VIEWFINDER</button></header>
+<nav class="tabs" id="tabs"><button data-a="tab" data-v="calc" class="on">Calculator</button><button data-a="tab" data-v="bank">Cameras</button><button data-a="tab" data-v="lenses">Lenses</button><button data-a="tab" data-v="plans">Plans</button><button data-a="tab" data-v="guide">Lens Guide</button><button data-a="tab" data-v="learn">Learn</button></nav>
+
+<section id="calc">
+<div id="stk"><div class="sk"><small>Near</small><b id="s1"></b></div><div class="sk"><small>Far</small><b id="s2"></b></div><div class="sk"><small>Total</small><b id="s3"></b></div><div class="sk"><small>HFOV</small><b id="s4"></b></div><div class="seg u"><button data-a="unit" data-v="m">m</button><button data-a="unit" data-v="ft">ft</button></div><div id="dg"></div></div>
+<div class="card"><label>Camera / Sensor</label><select id="cam"></select><div id="sinfo" class="mut" style="margin-top:6px"></div></div>
+<div class="card"><div class="g2"><div><label>Lens Series</label><select id="ser"></select></div><div><label>Focal Length <b id="fv"></b></label><select id="fsel"></select><input type="number" id="fnum" min="8" max="300" step="1" inputmode="decimal"></div></div>
+<div id="fsl"><input type="range" id="focal" min="8" max="300" step="1"><div class="mut" style="display:flex;justify-content:space-between"><span id="fmin">8 mm</span><span id="fmax">300 mm</span></div></div><div id="sqw"><label>Squeeze (anamorphic) <b id="sqv"></b></label><select id="sq"><option value="1">1× spherical</option><option value="1.3">1.3×</option><option value="1.33">1.33×</option><option value="1.5">1.5×</option><option value="1.8">1.8×</option><option value="2">2×</option></select></div><div id="modw"><label>Min focus distance (optional) <b>m</b></label><input type="number" id="mod" min="0" step="0.01" inputmode="decimal" placeholder="e.g. 0.6"></div></div>
+<div class="card"><label>Aperture <b id="av"></b></label>
+<div class="seg"><button data-a="mode" data-v="T">T-stop</button><button data-a="mode" data-v="f">f-stop</button></div>
+<input type="range" id="ap" min="0" step="1">
+<details class="hp"><summary>T-stop vs f-stop</summary><p>f-stop is geometric: focal length divided by aperture diameter. T-stop adds the light lost in the glass, so it reflects true exposure. DoF depends on geometry, so T is converted to an effective f-number using the lens transmission below.</p></details>
+<label>Focus Distance <b id="dv"></b></label><input type="range" id="dist" min="0" max="1000" step="1">
+<input type="number" id="dnum" step="0.01" min="0.1" inputmode="decimal" placeholder="Type exact distance (m or ft)">
+<div class="g2"><div><label>Circle of Confusion <b id="cv"></b></label><select id="k"><option value="1000">Soft ÷ 1000</option><option value="1500">Standard ÷ 1500</option><option value="1730">Zeiss ÷ 1730</option><option value="2000">Cine ÷ 2000</option><option value="m">Manual</option></select><input type="number" id="cm" step="0.001" min="0.001" style="margin-top:6px;display:none" placeholder="CoC in mm"></div><div id="tauw"><label>Transmission <b id="tv"></b></label><input type="range" id="tau" min="70" max="100" step="1"></div></div>
+</div>
+<div class="card"><h2>Depth of Field</h2><div id="res"></div><button class="btn" data-a="save">Save to My Plans</button></div>
+<div class="card"><h2>DoF Tables</h2>
+<div class="seg" id="tt"><button data-a="tt" data-v="0">Distance × T</button><button data-a="tt" data-v="1">All lenses</button><button data-a="tt" data-v="2">All sensors</button></div>
+<div id="tinfo" class="mut" style="margin-top:8px"></div><div class="tw" id="tbl"></div>
+<p class="mut">Method: thin-lens hyperfocal model, H = f²/(N·c) + f, with focus distance measured from the sensor plane. The maths is exact for the inputs you set. Sensor sizes and lens T-stops come from published figures and may differ from your unit, so check them against the manufacturer datasheet or add your own in the Cameras and Lenses tabs. T converts to an effective f-number using the transmission value (default 90%). For anamorphic lenses the squeeze widens the horizontal FOV; depth of field uses the real focal length.</p></div>
+</section>
+
+<section id="bank" hidden></section>
+<section id="lenses" hidden></section>
+<section id="plans" hidden></section>
+<section id="guide" hidden></section>
+<section id="learn" hidden dir="rtl">
+<div class="card"><h2>آموزش فوکوس و عمق میدان</h2><p class="mut">گام‌به‌گام، از شناخت لنز تا محاسبه. روی هر گام بزن تا باز شود.</p></div>
+<div class="card"><h3>بخش ۱ · شناخت لنز و اجزای آن</h3>
+<details open><summary>گام ۱ — فاصله کانونی (Focal Length)</summary><p>فاصله مرکز نوری لنز تا سنسور وقتی لنز روی بی‌نهایت فوکوس است، بر حسب میلی‌متر. عدد کوچک‌تر یعنی زاویه دید باز (واید) و عدد بزرگ‌تر یعنی زاویه کم و بزرگ‌نمایی بیشتر (تله).</p></details>
+<details><summary>گام ۲ — المان‌ها و گروه‌های شیشه‌ای</summary><p>لنز از ده‌ها شیشه (Element) ساخته شده که در گروه‌هایی (Group) چیده شده‌اند. جابه‌جا شدن بعضی گروه‌ها فوکوس را تغییر می‌دهد و بقیه خطاهای نوری (Aberration) را اصلاح می‌کنند. پوشش‌های ضدبازتاب (Coating) کنتراست را نگه می‌دارند و Flare را کم می‌کنند.</p></details>
+<details><summary>گام ۳ — دیافراگم (Iris)</summary><p>پره‌هایی که اندازه دهانه ورود نور را تنظیم می‌کنند. دهانه بازتر یعنی نور بیشتر و عمق میدان کمتر. تعداد و شکل پره‌ها شکل بوکه (Bokeh) را می‌سازد.</p></details>
+<details><summary>گام ۴ — f-stop</summary><p>عدد N در <code>f/N</code> برابر است با فاصله کانونی تقسیم بر قطر دهانه. هر یک استاپ یعنی ضرب N در ۱٫۴ و نصف شدن نور: <code>1.4 · 2 · 2.8 · 4 · 5.6 · 8 · 11 · 16 · 22</code></p></details>
+<details><summary>گام ۵ — T-stop</summary><p>نور واقعی رسیده به سنسور. شیشه‌ها مقداری نور جذب می‌کنند، پس T کمی بزرگ‌تر از f است: <code>T = N ÷ √(transmission)</code>. لنزهای سینمایی با T مدرج می‌شوند تا نوردهی همه لنزها یکسان باشد، اما عمق میدان از N (همان f مؤثر) حساب می‌شود.</p></details>
+<details><summary>گام ۶ — حلقه‌ها و مدرج‌ها</summary><p>حلقه فوکوس با مارک‌های فاصله (متر و فوت)، حلقه دیافراگم (T) و حلقه زوم. دنده‌های روی حلقه‌ها برای Follow Focus است.</p></details>
+<details><summary>گام ۷ — پرایم و زوم</summary><p>پرایم فاصله کانونی ثابت دارد، معمولاً T بازتر و کیفیت بالاتر. زوم یک بازه از فاصله‌های کانونی دارد. هر دو در برگه Cameras &amp; Lenses هستند.</p></details>
+<details><summary>گام ۸ — حداقل فاصله فوکوس و Breathing</summary><p>MOD نزدیک‌ترین فاصله‌ای است که لنز می‌تواند فوکوس کند. Breathing تغییر زاویه دید هنگام فوکوس کشیدن است.</p></details>
+<details><summary>گام ۹ — لنز آنامورفیک</summary><p>لنز آنامورفیک تصویر را فقط در راستای افقی فشرده می‌کند (Squeeze: ۱٫۳۳، ۱٫۵، ۱٫۸ یا ۲) و بعد از دی‌اسکوییز، تصویر عریض‌تر می‌شود. زاویه دید افقی: <code>HFOV = 2·arctan(w·s ÷ 2f)</code> و زاویه دید عمودی مثل لنز اسفریکال با همان f است. فاصله کانونی معادل افقی <code>f ÷ s</code> است؛ مثلاً ۵۰mm با squeeze ۲ از نظر افقی شبیه ۲۵mm قاب می‌دهد. نسبت تصویر نهایی <code>s·w ÷ h</code> است.</p><p>در اپ، عمق میدان با f واقعی و T حساب می‌شود. ویژگی‌های ظاهری: بوکه بیضی‌شکل، فلر افقی و Breathing بیشتر. فوکوس در دو راستا کمی فرق دارد و هیچ ماشین‌حسابی دقیقاً مدلش نمی‌کند؛ برای نماهای حساس تست بگیر.</p></details></div>
+<div class="card"><h3>بخش ۲ · سنسور دوربین و محاسبه با لنز</h3>
+<details open><summary>گام ۱ — اندازه و قطر سنسور</summary><p>سنسور را با عرض×ارتفاع به میلی‌متر می‌گویند، مثلاً ARRI ALEXA 35: <code>27.99 × 19.22</code>. قطر: <code>d = √(w² + h²)</code></p></details>
+<details><summary>گام ۲ — ضریب کراپ (Crop Factor)</summary><p><code>crop = 43.27 ÷ d</code>. فول‌فریم برابر ۱ است، سوپر ۳۵ حدود ۱٫۳ تا ۱٫۵ و میکرو فورثیرز حدود ۲.</p></details>
+<details><summary>گام ۳ — زاویه دید</summary><p><code>FOV = 2 · arctan( w ÷ 2f )</code>. همان لنز روی سنسور کوچک‌تر قاب تنگ‌تری می‌دهد.</p></details>
+<details><summary>گام ۴ — فاصله کانونی معادل</summary><p><code>f × crop</code>. لنز ۵۰ میلی‌متر روی سنسور با crop 1.5 قابی مثل ۷۵ میلی‌متر روی فول‌فریم می‌دهد.</p></details>
+<details><summary>گام ۵ — دایره اغتشاش (CoC)</summary><p>بزرگ‌ترین لکه‌ای که چشم هنوز آن را نقطه می‌بیند. استاندارد: <code>c = d ÷ 1500</code>. تقسیم بر ۱۷۳۰ یا ۲۰۰۰ سخت‌گیرانه‌تر است. سنسور بزرگ‌تر یعنی CoC بزرگ‌تر.</p></details>
+<details><summary>گام ۶ — فرمول‌ها</summary><p><code>H = f² ÷ (N·c) + f</code><br><code>Near = s(H−f) ÷ (H+s−2f)</code><br><code>Far = s(H−f) ÷ (H−s)</code><br>s فاصله فوکوس و N همان f مؤثر است. اگر s از H بیشتر شود، Far بی‌نهایت است.</p></details>
+<details><summary>گام ۷ — مثال عددی</summary><p>ALEXA 35، لنز ۵۰mm، T2.8 (N حدود ۲٫۶۶)، فوکوس روی ۳ متر: c حدود 0.0226mm و H حدود ۴۱٫۶ متر. نتیجه: Near حدود ۲٫۸۰ متر، Far حدود ۳٫۲۳ متر و عمق میدان حدود ۰٫۴۳ متر.</p></details>
+<details><summary>گام ۸ — چرا سنسور بزرگ‌تر عمق میدان کمتری دارد؟</summary><p>برای قاب یکسان باید لنز بلندتر یا دوربین نزدیک‌تر باشد و این عمق میدان را کم می‌کند. تقریباً: <code>DoF ≈ 2·N·c·s² ÷ f²</code></p></details></div>
+<div class="card"><h3>بخش ۳ · اصطلاحات فوکوس</h3>
+<details open><summary>صفحه فوکوس (Focal Plane)</summary><p>صفحه‌ای در فاصله s از دوربین که کاملاً واضح است.</p></details>
+<details><summary>عمق میدان (DoF)</summary><p>محدوده‌ای جلو و پشت صفحه فوکوس که واضح پذیرفته می‌شود. کم را Shallow و زیاد را Deep می‌گویند.</p></details>
+<details><summary>Near و Far limit</summary><p>نزدیک‌ترین و دورترین نقطه‌ای که هنوز واضح است. DoF برابر Far منهای Near است.</p></details>
+<details><summary>هایپرفوکال (Hyperfocal)</summary><p>نزدیک‌ترین فاصله‌ای که اگر روی آن فوکوس کنی، همه چیز تا بی‌نهایت واضح می‌ماند. در این حالت عمق میدان از H÷2 تا بی‌نهایت است.</p></details>
+<details><summary>سهم جلو و پشت صفحه فوکوس</summary><p>در فاصله‌های نزدیک تقریباً نیمی جلو و نیمی پشت است. با دورتر شدن فوکوس، حدود یک‌سوم جلو و دوسوم پشت می‌شود. اپ این سهم را در نتیجه نشان می‌دهد.</p></details>
+<details><summary>چهار عامل کنترل عمق میدان</summary><p>دیافراگم، فاصله کانونی، فاصله فوکوس و اندازه سنسور. برای عمق میدان کمتر: دیافراگم بازتر، لنز بلندتر، نزدیک‌تر شدن به سوژه یا سنسور بزرگ‌تر.</p></details>
+<details><summary>Rack Focus و Pull Focus</summary><p>Pull Focus کشیدن فوکوس از یک فاصله به فاصله دیگر است. Rack Focus همان کار به‌صورت هنری برای انتقال توجه بیننده است. فوکوس‌پالر (1st AC) این کار را انجام می‌دهد.</p></details>
+<details><summary>Bokeh و Depth of Focus</summary><p>Bokeh کیفیت نواحی ناواضح است. Depth of Focus تلورانس سمت سنسور است و با Depth of Field که سمت سوژه است فرق دارد.</p></details></div>
+</section>
+</div>
+<div id="vf" hidden>
+<div class="vtop"><div><b id="vc"></b><small id="vl"></small></div><div style="text-align:right"><b id="vh"></b><small id="va"></small></div></div>
+<div id="vstage"><div id="vfr"><video id="vv" playsinline muted autoplay></video><img id="vi" alt="" hidden><i class="sf"></i><i class="cx"></i><div id="vrl"><span id="vrt"></span></div></div><div id="vwarn" hidden>Wider than the phone lens. Switch phone lens to 0.5×.</div><div id="vmsg" hidden></div></div>
+<div class="vbot">
+<div id="vch" class="vsc"></div><input type="range" id="vfs" min="8" max="300" step="1" hidden>
+<div class="vrow"><select id="vcam"></select><select id="vser"></select></div>
+<div class="vrow"><button id="vasp"></button><button id="vgr"></button><select id="vph"><option value="13">Phone 0.5×</option><option value="24" selected>Phone 1× (24)</option><option value="26">Phone 1× (26)</option><option value="48">Phone 2×</option><option value="77">Phone 3×</option></select></div>
+<div class="vrow"><select id="vsq"><option value="1">Squeeze 1×</option><option value="1.3">1.3×</option><option value="1.33">1.33×</option><option value="1.5">1.5×</option><option value="1.8">1.8×</option><option value="2">2×</option></select><button id="vcm">Camera</button><label class="vb">Photo<input type="file" id="vphoto" accept="image/*" capture="environment" hidden></label><button id="vx" class="vexit">Exit</button></div>
+</div></div>
+<script>
+const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const SENS=[
+['ARRI','ALEXA 35',27.99,19.22],['ARRI','ALEXA Mini / Mini 3.4K',28.25,18.17],['ARRI','ALEXA Mini LF',36.70,25.54],['ARRI','ALEXA 65',54.12,25.58],
+['RED','V-RAPTOR 8K VV',40.96,21.60],['RED','KOMODO 6K',27.03,14.26],['RED','GEMINI 5K S35',30.72,18.0],
+['Sony','VENICE 2 (8.6K FF)',35.9,24.0],['Sony','FX9',35.7,18.8],['Sony','FX6 / FX3 / a7S III',35.6,23.8],['Sony','FX30 (APS-C)',23.3,15.5],
+['Canon','C70 / C300 III',26.2,13.8],['Canon','C500 Mk II',38.1,20.1],['Canon','R5 C',35.9,23.9],
+['Blackmagic','URSA Mini Pro 12K',27.03,14.25],['Blackmagic','Cinema Camera 6K FF',36.0,24.0],['Blackmagic','Pocket 6K Pro',23.1,12.99],['Blackmagic','Pocket 4K (MFT)',18.96,10.0],['Blackmagic','URSA Cine 12K LF',35.64,23.32],
+['Panasonic','VariCam 35 (S35)',24.6,13.8],['Panasonic','LUMIX S1H',35.6,23.8],['Panasonic','GH6 (MFT)',17.3,13.0],
+['Formats','Full Frame 36×24',36,24],['Formats','Super 35 (3-perf)',24.89,18.66],['Formats','35mm Academy',21.95,16.0],['Formats','APS-C',23.5,15.6],['Formats','Micro 4/3',17.3,13],['Formats','1 inch',13.2,8.8],['Formats','Super 16',12.52,7.41],['Formats','16mm',10.26,7.49],['Formats','65mm 5-perf',52.48,23.01],['Formats','IMAX 15/70',70.41,52.63]];
+const LS=[
+['ARRI Signature Prime','12:1.8,15:1.8,18:1.8,21:1.8,25:1.8,29:1.8,35:1.8,40:1.8,47:1.8,58:1.8,75:1.8,95:1.8,125:1.8,150:1.8,200:2.5'],
+['ARRI/Zeiss Master Prime','12:2,14:1.3,16:1.3,18:1.3,21:1.3,25:1.3,27:1.3,32:1.3,35:1.3,40:1.3,50:1.3,65:1.3,75:1.3,100:1.3,135:1.3,150:2'],
+['Zeiss Supreme Prime','15:1.8,18:1.5,21:1.5,25:1.5,29:1.5,35:1.5,40:1.5,50:1.5,65:1.5,85:1.5,100:1.5,125:1.8,150:1.8,200:2.2'],
+['Zeiss CP.3','15:2.9,18:2.9,21:2.9,25:2.1,28:2.1,35:2.1,50:2.1,85:2.1,100:2.1,135:2.1'],
+['Cooke S4/i','12:2,14:2,16:2,18:2,21:2,25:2,27:2,32:2,35:2,40:2,50:2,65:2,75:2,100:2,135:2,150:2,180:2,300:2.8'],
+['Cooke S7/i','16:2,18:2,21:2,25:2,27:2,32:2,40:2,50:2,65:2,75:2,100:2,135:2'],
+['Leica Summilux-C','16:1.4,18:1.4,21:1.4,25:1.4,29:1.4,35:1.4,40:1.4,50:1.4,65:1.4,75:1.4,100:1.4,135:1.4'],
+['Sigma Cine FF High Speed','14:2,20:1.5,24:1.5,28:1.5,35:1.5,40:1.5,50:1.5,65:1.5,85:1.5,105:1.5,135:2'],
+['Canon CN-E Prime','14:3.1,24:1.5,35:1.5,50:1.3,85:1.3,135:2.2'],
+['Tele Primes (180–600)','180:2.8,200:2.2,300:2.8,400:2.8,500:4,600:4'],
+['Atlas Orion Anamorphic 2×','21:2,25:2,32:2,40:2,50:2,65:2,80:2,100:2',2],
+['Cooke Anamorphic/i 2×','25:2.3,32:2.3,40:2.3,50:2.3,75:2.3,100:2.3,135:2.3,180:2.8',2],
+['ARRI/Zeiss Master Anamorphic 2×','35:1.9,40:1.9,50:1.9,60:1.9,75:1.9,100:1.9,135:1.9,180:2.8',2],
+['Panavision Hawk V-Lite 2×','28:2.2,35:2.2,45:2.2,55:2.2,65:2.2,75:2.2,90:2.2,110:2.2,135:3',2],
+['Sirui Anamorphic 1.33×','24:2.8,35:1.8,50:1.8,75:1.8',1.33]];
+const ZS=[['Angénieux Optimo 15-40',15,40,2.6],['Angénieux Optimo 28-76',28,76,2.6],['Angénieux Optimo 45-120',45,120,2.8],['Angénieux Optimo 24-290',24,290,2.8],['Angénieux Optimo 44-440',44,440,4.5],['ARRI Alura 30-75',30,75,2.6],['ARRI Alura 45-250',45,250,2.6],['Fujinon Premista 19-45',19,45,2.9],['Fujinon Premista 28-100',28,100,2.9],['Fujinon Premista 80-250',80,250,2.9],['Zeiss LWZ.3 21-100',21,100,2.9],['Canon CN-E 16-47',16,47,2.8],['Canon CN-E 30-105',30,105,2.8],['Canon CN-E 18-80',18,80,4.4],['Canon CN-E 70-200',70,200,4.4]];
+const AP=[1,1.2,1.3,1.4,1.5,1.8,2,2.2,2.5,2.8,3.2,3.5,4,4.5,5,5.6,6.3,7.1,8,9,11,13,16,22];
+const FREE=[14,18,25,35,50,65,85,100,135];
+let store={cc:[],cs:[],pl:[]};
+try{Object.assign(store,JSON.parse(localStorage.getItem('dof1')||'{}'))}catch(e){}
+const persist=()=>{try{localStorage.setItem('dof1',JSON.stringify(store))}catch(e){}};
+const cams=()=>SENS.map(a=>({g:a[0],n:a[1],w:a[2],h:a[3]})).concat(store.cc.map(c=>({...c,g:'Custom',x:1})));
+const sers=()=>LS.map(a=>({n:a[0],q:a[2]||1,L:a[1].split(',').map(p=>p.split(':').map(Number))})).concat(ZS.map(z=>({n:z[0],z:1,L:[[z[1],z[3]],[z[2],z[3]]]}))).concat(store.cs.map(s=>({...s,x:1})));
+let S={cam:0,ser:sers().findIndex(s=>s.n.includes('Master')),focal:35,ap:AP.indexOf(2.8),dv:500,mode:'T',tau:90,k:'1500',cm:.025,u:'m',tt:0,tab:'calc'};
+const DMIN=.2,DMAX=200,dv2=d=>Math.round(1000*Math.log(d/DMIN)/Math.log(DMAX/DMIN));
+const dOf=v=>{const d=DMIN*Math.pow(DMAX/DMIN,v/1000);return d<1?Math.round(d*100)/100:d<10?Math.round(d*10)/10:d<100?Math.round(d*2)/2:Math.round(d)};
+const DD=()=>S.d!=null&&Math.abs(dv2(S.d)-S.dv)<2?S.d:dOf(S.dv);
+const Nf=a=>S.mode==='T'?a*Math.sqrt(S.tau/100):a;
+const lim=T=>S.mode==='T'?T:T*Math.sqrt(S.tau/100);
+const curSer=()=>S.ser>=0?sers()[S.ser]:null;
+const apMin=()=>{const sr=curSer();if(!sr)return 0;const l=sr.z?sr.L[0]:sr.L.find(x=>x[0]===S.focal);if(!l)return 0;const i=AP.findIndex(a=>a>=lim(l[1])-.04);return i<0?AP.length-1:i};
+const coc=C=>S.k==='m'?S.cm:Math.hypot(C.w,C.h)/(+S.k);
+const calc=(f,N,c,s)=>{const H=f*f/(N*c)+f;if(!(s>f*1.001))return{H,near:NaN,far:NaN,bad:1};return{H,near:s*(H-f)/(H+s-2*f),far:s>=H?Infinity:s*(H-f)/(H-s)}};
+const SQ=()=>{const sr=curSer();return sr&&!sr.z?(sr.q||1):(S.sq||1)};
+const hfov=(C,f)=>2*Math.atan(C.w*SQ()/(2*f))*180/Math.PI;
+const vfov=(C,f)=>2*Math.atan(C.h/(2*f))*180/Math.PI;
+const lbl=a=>(S.mode==='T'?'T':'f/')+a;
+const mv=x=>S.u==='ft'?x/304.8:x/1000;
+const fm=x=>{if(isNaN(x))return '—';if(!isFinite(x))return '∞';const v=mv(x);if(S.u==='ft'){if(v>=100)return Math.round(v)+' ft';const t=Math.round(v*12);return Math.floor(t/12)+'′ '+(t%12)+'″'}return (v<1?v.toFixed(3):v<10?v.toFixed(2):v<100?v.toFixed(1):Math.round(v))+' m'};
+const sh=x=>{if(isNaN(x))return '—';if(!isFinite(x))return '∞';const v=mv(x);return v<10?v.toFixed(2):v<100?v.toFixed(1):Math.round(v)};
+
+function buildSel(){
+ const g={};cams().forEach((c,i)=>(g[c.g]=g[c.g]||[]).push(`<option value="${i}">${esc(c.n)} — ${c.w}×${c.h}</option>`));
+ $('#cam').innerHTML=Object.keys(g).map(k=>`<optgroup label="${esc(k)}">${g[k].join('')}</optgroup>`).join('');
+ $('#ser').innerHTML='<option value="-1">Custom focal (free)</option>'+sers().map((s,i)=>`<option value="${i}">${esc(s.n)}${s.z?' — Zoom':''}</option>`).join('');
+ $('#ap').max=AP.length-1;
+}
+function sync(){
+ if(S.cam>=cams().length)S.cam=0;if(S.ser>=sers().length)S.ser=-1;
+ $('#cam').value=S.cam;$('#ser').value=S.ser;$('#focal').value=S.focal;$('#dist').value=S.dv;$('#tau').value=S.tau;$('#k').value=S.k;$('#cm').value=S.cm;$('#mod').value=S.mod||'';
+}
+function R(){
+ const sr=curSer();
+ if(sr&&sr.z)S.focal=Math.min(sr.L[1][0],Math.max(sr.L[0][0],S.focal));else if(sr&&!sr.L.some(x=>x[0]===S.focal))S.focal=sr.L[0][0];
+ const mn=apMin();if(S.ap<mn)S.ap=mn;
+ $('#ap').value=S.ap;$('#ap').min=0;
+ const C=cams()[S.cam]||cams()[0],f=S.focal,a=AP[S.ap],N=Nf(a),c=coc(C),s=DD()*1000;
+ const r=calc(f,N,c,s);
+ $('#fsl').hidden=!!sr&&!sr.z;{const a0=sr&&sr.z?sr.L[0][0]:8,a1=sr&&sr.z?sr.L[1][0]:300;$('#focal').min=a0;$('#focal').max=a1;$('#focal').value=S.focal;$('#fmin').textContent=a0+' mm';$('#fmax').textContent=a1+' mm'}{const pr=sr&&!sr.z;$('#fsel').hidden=!pr;$('#fnum').hidden=pr;if(pr){$('#fsel').innerHTML=sr.L.map(l=>`<option value="${l[0]}">${l[0]} mm · T${l[1]}</option>`).join('');$('#fsel').value=f}else if(document.activeElement!==$('#fnum'))$('#fnum').value=f}
+ $('#fv').textContent=f+' mm';{const q=SQ(),fx=!sr||sr.z;$('#sq').value=String(q);$('#sq').disabled=!fx;$('#sqv').textContent=q>1?q+'×':''}$('#av').textContent=lbl(a)+(sr&&mn>0&&S.ap===mn?' · wide open':'');
+ $('#tauw').hidden=S.mode!=='T';$('#tv').textContent=S.tau+'%';
+ $('#dv').textContent=fm(s);$('#s1').textContent=fm(r.near);$('#s2').textContent=fm(r.far);$('#s3').textContent=fm(r.far-r.near);$('#s4').textContent=hfov(C,f).toFixed(1)+'°';$('#sinfo').textContent=`${C.w} × ${C.h} mm · diag ${Math.hypot(C.w,C.h).toFixed(1)} mm · crop ×${(43.27/Math.hypot(C.w,C.h)).toFixed(2)} · CoC ${c.toFixed(4)} mm`;if(document.activeElement!==$('#dnum'))$('#dnum').value=+mv(s).toFixed(2);$('#cv').textContent=c.toFixed(4)+' mm';$('#cm').style.display=S.k==='m'?'block':'none';
+ document.querySelectorAll('[data-a=mode]').forEach(b=>b.classList.toggle('on',b.dataset.v===S.mode));
+ document.querySelectorAll('[data-a=unit]').forEach(b=>b.classList.toggle('on',b.dataset.v===S.u));
+ document.querySelectorAll('[data-a=tt]').forEach(b=>b.classList.toggle('on',+b.dataset.v===S.tt));
+ const dof=r.far-r.near,fr=isFinite(r.far)?Math.round((s-r.near)/dof*100):null,wm=[];if(r.bad)wm.push('Focus distance must be greater than the focal length ('+f+' mm).');if(S.mod>0&&s/1000<S.mod-1e-9)wm.push('Closer than the lens minimum focus ('+S.mod+' m). This focus distance is not reachable.');const wr=wm.map(t=>`<p class="wr">${t}</p>`).join('');
+ $('#res').innerHTML=wr+`<div class="g2"><div class="kv"><small>Near limit</small><b>${fm(r.near)}</b></div><div class="kv"><small>Far limit</small><b>${fm(r.far)}</b></div><div class="kv"><small>Total DoF</small><b>${fm(dof)}</b></div><div class="kv"><small>Hyperfocal</small><b>${fm(r.H)}</b></div><div class="kv"><small>Horizontal FOV</small><b>${hfov(C,f).toFixed(1)}°</b></div>${SQ()>1?`<div class="kv"><small>Vertical FOV</small><b>${vfov(C,f).toFixed(1)}°</b></div><div class="kv"><small>Squeeze</small><b>${SQ()}×</b></div>`:''}<div class="kv"><small>${S.mode==='T'?'Effective f':'Approx. T'}</small><b>${S.mode==='T'?'f/'+N.toFixed(2):'T'+(a/Math.sqrt(S.tau/100)).toFixed(2)}</b></div></div>`;$('#dg').innerHTML=wr+(r.bad?'':svg(r,s)+`<p class="mut">${fr===null?'Depth of field extends to infinity.':'Front '+fr+'% · behind '+(100-fr)+'% of the focus plane'}</p>`);
+ table(C,c,s);
+}
+function svg(r,s){
+ const mx=Math.max(s*1.8,isFinite(r.far)?r.far*1.1:s*3),x=d=>12+296*Math.min(d,mx)/mx;
+ return `<svg viewBox="0 0 320 54" role="img" aria-label="Depth of field diagram"><line x1="12" y1="30" x2="308" y2="30" stroke="#243229" stroke-width="2"/><rect x="${x(r.near)}" y="20" width="${Math.max(2,x(r.far)-x(r.near))}" height="20" rx="4" fill="#a6e22e" opacity=".35"/><path d="M2 22l10 8-10 8z" fill="#8fa095"/><line x1="${x(s)}" y1="10" x2="${x(s)}" y2="50" stroke="#c8ff3d" stroke-width="2"/><text x="${x(s)}" y="8" fill="#c8ff3d" font-size="9" text-anchor="middle">${fm(s)}</text></svg>`;
+}
+function table(C,c,s){
+ let h='',info='';
+ if(S.tt===0){
+  const sr=curSer(),mn=apMin(),f=S.focal,tmin=AP[mn];
+  const cols=[1.3,1.8,2,2.8,4,5.6,8,11,16].filter(t=>t>=tmin-.04).slice(0,7);if(!cols.length)cols.push(AP[mn]);
+  const ds=(S.u==='m'?[.5,.75,1,1.5,2,3,4,5,7,10,15,20,30]:[2,3,5,7,10,15,20,30,50,70,100]).map(d=>({l:d,mm:d*(S.u==='m'?1000:304.8)}));
+  const cur=ds.reduce((b,d)=>Math.abs(d.mm-s)<Math.abs(b.mm-s)?d:b,ds[0]);
+  info=`${f} mm · ${C.n} — cell = near – far`;
+  h=`<table><tr><th>${S.u}</th>${cols.map(t=>`<th>${lbl(t)}</th>`).join('')}</tr>`+ds.map(d=>`<tr class="${d===cur?'me':''}"><td>${d.l}</td>${cols.map(t=>{const r=calc(f,Nf(t),c,d.mm);return `<td class="${Math.abs(t-AP[S.ap])<.01?'me':''}">${sh(r.near)}–${sh(r.far)}</td>`}).join('')}</tr>`).join('')+'</table>';
+ }else if(S.tt===1){
+  const sr=curSer(),L=sr?(sr.z?[sr.L[0][0],...[35,50,70,100,135,200].filter(x=>x>sr.L[0][0]&&x<sr.L[1][0]),sr.L[1][0]].map(x=>[x,sr.L[0][1]]):sr.L):FREE.map(x=>[x,0]);
+  info=`${lbl(AP[S.ap])} · focus ${fm(s)} · ${C.n}${sr?'':' (sample lenses)'}`;
+  h=`<table><tr><th>mm</th><th>${S.mode==='T'?'T':'f'}</th><th>Near</th><th>Far</th><th>DoF</th><th>HFOV</th></tr>`+L.map(l=>{const a=Math.max(AP[S.ap],sr?lim(l[1]):0),r=calc(l[0],Nf(a),c,s);return `<tr class="${l[0]===S.focal?'me':''}"><td>${l[0]}</td><td>${a<AP[S.ap]+.001?a:a.toFixed(1)}</td><td>${sh(r.near)}</td><td>${sh(r.far)}</td><td>${sh(r.far-r.near)}</td><td>${hfov(C,l[0]).toFixed(0)}°</td></tr>`}).join('')+'</table>';
+ }else{
+  info=`${S.focal} mm · ${lbl(AP[S.ap])} · focus ${fm(s)} (CoC = diagonal ÷ ${S.k==='m'?'manual':S.k})`;
+  h=`<table><tr><th>Sensor</th><th>mm</th><th>Near</th><th>Far</th><th>DoF</th><th>HFOV</th></tr>`+cams().map((k,i)=>{const r=calc(S.focal,Nf(AP[S.ap]),coc(k),s);return `<tr class="${i===S.cam?'me':''}"><td>${esc(k.n)}</td><td>${k.w}×${k.h}</td><td>${sh(r.near)}</td><td>${sh(r.far)}</td><td>${sh(r.far-r.near)}</td><td>${hfov(k,S.focal).toFixed(0)}°</td></tr>`}).join('')+'</table>';
+ }
+ $('#tinfo').textContent=info;$('#tbl').innerHTML=h;
+}
+function bank(){
+ const g={};cams().forEach((c,i)=>(g[c.g]=g[c.g]||[]).push([c,i]));
+ $('#bank').innerHTML=`<div class="card"><h2>Cameras</h2>`+Object.keys(g).map(k=>`<div class="grp">${esc(k)}</div>`+g[k].map(([c,i])=>`<div class="row"><div>${esc(c.n)}<small>${c.w}×${c.h} mm · diag ${Math.hypot(c.w,c.h).toFixed(1)}</small></div>${c.x?`<button class="x" data-a="dc" data-v="${i-SENS.length}">Delete</button>`:`<button class="ld" data-a="pc" data-v="${i}">Select</button>`}</div>`).join('')).join('')+`
+ <div class="grp">Add camera</div><div class="frm"><input type="text" id="nc" placeholder="Camera name" class="w"><input type="number" id="nw" placeholder="Sensor width mm" step="0.01"><input type="number" id="nh" placeholder="Sensor height mm" step="0.01"></div><button class="btn" data-a="ac">Add camera</button></div>
+ <div class="card"><h2>Lenses</h2>`+sers().map((s,i)=>`<div class="row"><div>${esc(s.n)}<small>${s.z?'Zoom '+s.L[0][0]+'–'+s.L[1][0]:s.L.map(l=>l[0]).join(' · ')} mm · T${Math.min(...s.L.map(l=>l[1]))}+${s.q>1?' · '+s.q+'× anamorphic':''}</small></div>${s.x?`<button class="x" data-a="ds" data-v="${i-LS.length-ZS.length}">Delete</button>`:`<button class="ld" data-a="ps" data-v="${i}">Select</button>`}</div>`).join('')+`
+ <div class="grp">Add lens series</div><div class="frm"><input type="text" id="ns" placeholder="Series name" class="w"><input type="text" id="nf" placeholder="Focal lengths: 18,25,35,50" style="direction:ltr"><input type="number" id="nt" placeholder="Max aperture T" step="0.1"><input type="number" id="nq" class="w" placeholder="Squeeze (1, 1.33, 1.5, 1.8, 2)" step="0.01"></div><button class="btn" data-a="as">Add lens series</button><p class="mut">Custom entries are stored on this device.</p></div>`;$('#lenses').replaceChildren($('#bank').children[1]);
+}
+function plans(){
+ $('#plans').innerHTML=`<div class="card"><h2>My Plans</h2>`+(store.pl.length?store.pl.map((p,i)=>`<div class="row"><div>${esc(p.name)}<small>${esc(p.camN)}</small></div><span><button class="ld" data-a="lp" data-v="${i}">Open</button> <button class="x" data-a="dp" data-v="${i}">Delete</button></span></div>`).join(''):'<p class="mut">No saved plans yet. Set up a shot in Calculator and tap Save.</p>')+'</div>';
+}
+function show(t){S.tab=t;['calc','bank','lenses','plans','guide','learn'].forEach(x=>$('#'+x).hidden=x!==t);document.querySelectorAll('[data-a=tab]').forEach(b=>b.classList.toggle('on',b.dataset.v===t));if(t==='bank'||t==='lenses')bank();if(t==='guide')guide();if(t==='plans')plans();scrollTo(0,0)}
+const A={
+ tab:v=>show(v),mode:v=>{S.mode=v;R()},unit:v=>{S.u=v;R()},tt:v=>{S.tt=+v;R()},f:v=>{S.focal=+v;R()},
+ save:()=>{const C=cams()[S.cam],sr=curSer();store.pl.unshift({name:`${S.focal}mm ${lbl(AP[S.ap])} @ ${fm(DD()*1000)}`,camN:C.n,serN:sr?sr.n:null,s:{...S,d:DD(),dv:dv2(DD())}});persist();show('plans')},
+ lp:v=>{const p=store.pl[+v];Object.assign(S,p.s,{tab:'calc'});S.cam=Math.max(0,cams().findIndex(c=>c.n===p.camN));S.ser=p.serN?sers().findIndex(s=>s.n===p.serN):-1;sync();show('calc');R()},
+ dp:v=>{store.pl.splice(+v,1);persist();plans()},
+ pc:v=>{S.cam=+v;sync();show('calc');R()},ps:v=>{S.ser=+v;sync();show('calc');R()},gf:v=>{G.f=v;guide()},
+ dc:v=>{store.cc.splice(+v,1);persist();buildSel();S.cam=0;sync();bank()},ds:v=>{store.cs.splice(+v,1);persist();buildSel();S.ser=-1;sync();bank()},
+ ac:()=>{const n=$('#nc').value.trim(),w=+$('#nw').value,h=+$('#nh').value;if(!n||!(w>0)||!(h>0))return alert('Enter a name, sensor width and height.');store.cc.push({n,w,h});persist();buildSel();sync();bank()},
+ as:()=>{const n=$('#ns').value.trim(),t=+$('#nt').value,fs=$('#nf').value.split(/[,،\s]+/).map(Number).filter(x=>x>0);if(!n||!(t>0)||!fs.length)return alert('Enter a series name, focal lengths and T.');store.cs.push({n,q:+$('#nq').value>1?+$('#nq').value:1,L:fs.map(f=>[f,t])});persist();buildSel();sync();bank()}
+};
+document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(b&&A[b.dataset.a])A[b.dataset.a](b.dataset.v)});
+[['cam','cam',1],['ser','ser',1],['focal','focal',1],['ap','ap',1],['tau','tau',1],['dist','dv',1],['k','k',0],['cm','cm',1]].forEach(([id,k,n])=>$('#'+id).addEventListener('input',e=>{S[k]=n?+e.target.value:e.target.value;if(id==='ser'){const sr=curSer();if(sr&&!sr.L.some(l=>l[0]===S.focal))S.focal=sr.L.reduce((b,l)=>Math.abs(l[0]-S.focal)<Math.abs(b[0]-S.focal)?l:b)[0]}if(id==='cm'&&!(S.cm>0))S.cm=.025;R()}));
+$('#dnum').addEventListener('input',e=>{const v=parseFloat(e.target.value);if(!(v>0))return;const d=Math.min(DMAX,Math.max(DMIN,v*(S.u==='ft'?.3048:1)));S.d=d;S.dv=dv2(d);$('#dist').value=S.dv;R()});
+$('#fsel').addEventListener('input',e=>{S.focal=+e.target.value;R()});$('#fnum').addEventListener('input',e=>{const v=+e.target.value;if(v>0){S.focal=v;R()}});
+
+const IN=i=>{const ft=Math.floor(i/12),r=i%12;return (ft?ft+'\u2032'+(r?r+'\u2033':''):r+'\u2033')+' ('+(i*.0254).toFixed(2)+' m)'};
+const mi=o=>{const r={};for(const k in o)r[k]=IN(o[k]);return r};
+const SRC='Source: manufacturer datasheets and retailer listings.';
+const INFO={
+'ARRI/Zeiss Master Prime':{ty:'Spherical prime',mt:'PL with LDS',cv:'Super 35 (image circle 27.2\u201331.1 mm)',ir:'9 blades or more',fd:'114 mm',mod:mi({35:14,50:20,65:26,75:32,135:37}),ft:['Dual floating elements: close-focus performance with minimal breathing','Aspherical elements for low chromatic aberration','T*XP anti-reflection coating','Focus scale in feet and metres, reversible by a technician','Matched 114 mm front diameter across most of the set','50 mm: 2.7 kg, 205 mm long'],nt:SRC+' Close focus is published for 35, 50, 65, 75 and 135 mm only.'},
+'ARRI Signature Prime':{ty:'Spherical prime',mt:'LPL with LDS-2 (compatible with LDS-1 and Cooke /i)',cv:'Large format, 44.7 mm image circle (up to 46 mm)',ir:'11 blades',fd:'114 mm (12 mm: 134 mm, 15 mm: 156 mm)',mod:mi({12:14,15:14,18:14,21:14,35:14}),ft:['Telecentric design minimises breathing','Magnesium housing with aluminium gear rings, water-resistant','Front and rear elements can be replaced at a service centre','Magnetic rear net holder for diffusion','Anti-reflective coatings, light baffles and light traps','35 mm: 1.7 kg, 178 mm long, magnification 1:5.4'],nt:SRC+' Close focus is published for 12\u201321 and 35 mm only.'},
+'Cooke S4/i':{ty:'Spherical prime',mt:'PL with /i Technology contacts',cv:'Super 35 (30 mm image circle)',ir:'8-blade linear iris',fd:'110 mm (12 mm: 156 mm, 150 mm: 125 mm, 180 and 300 mm: 136 mm)',mod:mi({12:9,14:9,16:9,18:9,21:9,25:9,27:10,32:12,35:14,40:16,50:20,65:27,75:30,100:36,135:33,150:42,180:51,300:84}),ft:['True T2 aperture on every lens (300 mm is T2.8)','/i Technology reports focus, iris, depth of field and hyperfocal data','Cam-type focus mechanism for smooth focus','Focus and iris gears: 0.8 module on all lenses','Colour matched across the Cooke range','50 mm: focus ring about 300\u00b0, iris about 93\u00b0'],nt:SRC+' Close focus is the minimum marked distance, measured from the image plane.'},
+'ARRI/Zeiss Master Anamorphic 2\u00d7':{ty:'Anamorphic prime, 2\u00d7 squeeze',mt:'PL with LDS',cv:'\u2014',ir:'\u2014',fd:'\u2014',mod:{28:'0.65 m (2\u20323\u2033)',35:'0.75 m (2\u20326\u2033)'},ft:['T1.9\u2013T22','Straight lines stay straight: low distortion even at close focus','Smooth out-of-focus image with natural focus fall-off','Magnification at 28 and 35 mm: H 1:32.3'],nt:SRC+' Close focus is published for 28 and 35 mm only.'}
+};
+const DIM={'ARRI/Zeiss Master Prime':{l:205,d:114,f:'50 mm'},'ARRI Signature Prime':{l:178,d:114,f:'35 mm'},'Cooke S4/i':{l:119,d:110,f:'50 mm'}};
+const elp=(x,t,r1,r2,h)=>{const sg=Math.sign,sq=Math.sqrt,X1=y=>x+r1-sg(r1)*sq(r1*r1-y*y);let tt=t;const e1=X1(h),e2=x+tt+r2-sg(r2)*sq(r2*r2-h*h);if(e2<e1+1.4)tt+=e1+1.4-e2;const V=x+tt,X2=y=>V+r2-sg(r2)*sq(r2*r2-y*y),P=[];for(let i=0;i<=14;i++){const y=-h+2*h*i/14;P.push([X1(y),150+y])}for(let i=14;i>=0;i--){const y=-h+2*h*i/14;P.push([X2(y),150+y])}
+ return{d:'M'+P.map(q=>q[0].toFixed(1)+' '+q[1].toFixed(1)).join('L')+'Z',r:V,l:x}};
+function optSvg(){
+ const E=[],add=(x,t,a,b,h)=>{const e=elp(x,t,a,b,h);E.push(e);return e};
+ add(62,8,170,62,43);add(98,15,110,-150,40);const c=add(138,14,95,-80,38);add(c.r,8,-80,-200,38);
+ add(200,8,-130,130,34);add(222,12,90,1e4,34);
+ const r1=add(290,14,150,-60,32);add(r1.r,7,-60,-120,32);add(338,14,70,-100,30);const asp=add(372,9,60,50,28);add(408,13,80,-80,26);add(444,6,-55,-90,24);
+ let s=`<svg class="an" viewBox="0 0 760 310" role="img" aria-label="Generic cine prime optical layout"><defs><pattern id="ht" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="4" stroke="#6b756d" stroke-width=".8"/></pattern></defs>`;
+ s+='<g fill="none" stroke="#cfd6d0" stroke-width="1">';
+ const up=[[48,86,205,86],[205,86,205,80],[205,80,300,80],[300,80,300,92],[300,92,530,92],[530,92,530,70],[530,70,552,70]];
+ const mk=(a,sgn)=>`M48 ${150+sgn*64}L48 ${150+sgn*52}L205 ${150+sgn*52}L205 ${150+sgn*60}L300 ${150+sgn*60}L300 ${150+sgn*50}L530 ${150+sgn*50}L530 ${150+sgn*80}L552 ${150+sgn*80}L552 ${150+sgn*50}`;
+ for(const sgn of[-1,1]){const o=`M48 ${150+sgn*68}L205 ${150+sgn*68}L205 ${150+sgn*74}L300 ${150+sgn*74}L300 ${150+sgn*62}L520 ${150+sgn*62}L520 ${150+sgn*86}L552 ${150+sgn*86}L552 ${150+sgn*50}L48 ${150+sgn*50}Z`;s+=`<path d="${o}" fill="url(#ht)"/><path d="${o}"/>`}
+ s+='</g><g stroke="#8d978f" stroke-width=".8">';
+ for(let i=0;i<22;i++){const x=122+i*4;s+=`<line x1="${x}" y1="${150-68}" x2="${x}" y2="${150-74}"/><line x1="${x}" y1="${150+68}" x2="${x}" y2="${150+74}"/>`}
+ s+='</g><g fill="#0b0f0c" stroke="#e8efe9" stroke-width="1">'+E.map(e=>`<path d="${e.d}"/>`).join('')+'</g>';
+ s+=`<path d="M${asp.l+1} 126Q${asp.l+7} 150 ${asp.l+1} 174" fill="none" stroke="#c8ff3d" stroke-width="1.6" stroke-dasharray="3 2"/>`;
+ s+='<g stroke="#e8efe9" stroke-width="2"><path d="M262 76L262 138L270 138L270 76Z" fill="#0b0f0c"/><path d="M262 224L262 162L270 162L270 224Z" fill="#0b0f0c"/></g><g stroke="#cfd6d0" stroke-width=".8"><line x1="266" y1="62" x2="266" y2="76"/><line x1="266" y1="224" x2="266" y2="238"/></g>';
+ s+='<g stroke="#a6e22e" stroke-width=".8" opacity=".75" fill="none">'+[-30,-15,0,15,30].map(y=>`<polyline points="10,${150+y} 96,${150+y} 266,${150+y*.28} 665,150"/>`).join('')+'</g>';
+ s+='<g stroke="#8d978f" stroke-width=".8" stroke-dasharray="10 3 2 3"><line x1="4" y1="150" x2="720" y2="150"/></g>';
+ s+='<line x1="665" y1="96" x2="665" y2="204" stroke="#e8efe9" stroke-width="1.4"/><g stroke="#8d978f" stroke-width=".8"><line x1="530" y1="232" x2="665" y2="232"/><line x1="530" y1="226" x2="530" y2="238"/><line x1="665" y1="226" x2="665" y2="238"/></g>';
+ s+='<text x="597" y="248" fill="#8d978f" font-size="8.5" text-anchor="middle" font-family="Montserrat">FLANGE FOCAL DISTANCE  PL 52 mm · LPL / EF 44 mm</text>';
+ s+='<g stroke="#8d978f" stroke-width=".7"><line x1="210" y1="112" x2="238" y2="112"/><polyline points="210,112 215,109 215,115"/><polyline points="238,112 233,109 233,115"/></g><text x="224" y="106" fill="#c8ff3d" font-size="8" text-anchor="middle" font-family="Montserrat">FLOAT</text>';
+ const call=[[1,80,98,72],[2,230,98,72],[3,266,70,60],[4,asp.l+3,124,60],[5,430,122,60],[6,541,70,60],[7,160,76,60],[8,665,96,60]];
+ s+=call.map(a=>`<line x1="${a[1]}" y1="${a[2]}" x2="${a[1]}" y2="${a[3]+8}" stroke="#8d978f" stroke-width=".7"/><circle cx="${a[1]}" cy="${a[3]}" r="8" fill="#0b0f0c" stroke="#a6e22e"/><text x="${a[1]}" y="${a[3]+3.5}" fill="#c8ff3d" font-size="10" font-weight="700" text-anchor="middle" font-family="Montserrat">${a[0]}</text>`).join('');
+ s+='<text x="8" y="296" fill="#8d978f" font-size="8" letter-spacing="1" font-family="Montserrat">GENERIC CINE PRIME · OPTICAL LAYOUT · ILLUSTRATIVE, NOT THE DESIGN OF A SPECIFIC LENS</text></svg>';
+ return s}
+const ANAT=optSvg()+`<ol class="al"><li>Front group (negative meniscus, positive element, cemented doublet): sets the entrance pupil and front diameter</li><li>Focus group of floating elements: moves relative to the rest to focus while limiting breathing</li><li>Iris: the aperture stop that sets the T-stop and bokeh shape</li><li>Aspherical element (dashed): corrects spherical aberration and distortion</li><li>Rear group: field correction, positioned for the flange focal distance</li><li>Lens mount flange with data contacts</li><li>Focus ring with 0.8 module gear teeth; the iris ring sits behind it</li><li>Image plane (sensor)</li></ol><p class="mut">Rays are illustrative. Element shapes, counts and positions differ in every real design. Cylindrical groups are added in anamorphic lenses.</p>`;
+const extSvg=(sr)=>{const D=DIM[sr.n],mx=Math.max(...sr.L.map(l=>l[0])),L=D?D.l:(sr.z?190:120+mx*.18),F=D?D.d:(sr.q>1?120:100),sc=.7,x0=34,y0=60,len=L*sc,fh=F*sc/2,mh=fh*.62;
+ const x1=x0+len,fr=x0+len*.2,fr2=fr+len*.3,ir=fr2+len*.06,ir2=ir+len*.14,ex=sr.z?[x0+len*.45,x0+len*.62]:null;
+ let s=`<svg viewBox="0 0 320 128" class="ls" role="img" aria-label="${esc(sr.n)} elevation drawing"><g fill="none" stroke="#cfd6d0" stroke-width="1">`;
+ s+=`<path d="M${x0} ${y0-fh}L${fr} ${y0-fh}L${fr} ${y0-fh-3}L${fr2} ${y0-fh-3}L${fr2} ${y0-fh}L${ir} ${y0-fh}L${ir} ${y0-fh-2}L${ir2} ${y0-fh-2}L${ir2} ${y0-mh-6}L${x1} ${y0-mh-6}L${x1} ${y0-mh}L${x1+10} ${y0-mh}L${x1+10} ${y0+mh}L${x1} ${y0+mh}L${x1} ${y0+mh+6}L${ir2} ${y0+mh+6}L${ir2} ${y0+fh+2}L${ir} ${y0+fh+2}L${ir} ${y0+fh}L${fr2} ${y0+fh}L${fr2} ${y0+fh+3}L${fr} ${y0+fh+3}L${fr} ${y0+fh}L${x0} ${y0+fh}Z" fill="#0b0f0c"/>`;
+ s+=`<line x1="${x0}" y1="${y0-fh*.8}" x2="${x0}" y2="${y0+fh*.8}"/><ellipse cx="${x0}" cy="${y0}" rx="${sr.q>1?5:3}" ry="${fh*.8}"/></g><g stroke="#6b756d" stroke-width=".7">`;
+ for(let x=fr+2;x<fr2-1;x+=2.2)s+=`<line x1="${x}" y1="${y0-fh-3}" x2="${x}" y2="${y0-fh}"/><line x1="${x}" y1="${y0+fh+3}" x2="${x}" y2="${y0+fh}"/>`;
+ for(let x=ir+1.5;x<ir2-1;x+=2.2)s+=`<line x1="${x}" y1="${y0-fh-2}" x2="${x}" y2="${y0-fh}"/><line x1="${x}" y1="${y0+fh+2}" x2="${x}" y2="${y0+fh}"/>`;
+ for(let x=fr+6;x<fr2-4;x+=7)s+=`<line x1="${x}" y1="${y0-fh+4}" x2="${x}" y2="${y0-fh+1}" stroke="#a6e22e"/>`;
+ if(ex)s+=`<rect x="${ex[0]}" y="${y0-fh}" width="${ex[1]-ex[0]}" height="${fh*2}" fill="none" stroke="#a6e22e" stroke-dasharray="2 2"/>`;
+ s+=`</g><line x1="8" y1="${y0}" x2="${x1+30}" y2="${y0}" stroke="#8d978f" stroke-width=".7" stroke-dasharray="10 3 2 3"/>`;
+ if(D){s+=`<g stroke="#8d978f" stroke-width=".7"><line x1="${x0}" y1="${y0+fh+10}" x2="${x1}" y2="${y0+fh+10}"/><line x1="${x0}" y1="${y0+fh+6}" x2="${x0}" y2="${y0+fh+14}"/><line x1="${x1}" y1="${y0+fh+6}" x2="${x1}" y2="${y0+fh+14}"/><line x1="${x0-8}" y1="${y0-fh}" x2="${x0-8}" y2="${y0+fh}"/><line x1="${x0-11}" y1="${y0-fh}" x2="${x0-5}" y2="${y0-fh}"/><line x1="${x0-11}" y1="${y0+fh}" x2="${x0-5}" y2="${y0+fh}"/></g><g fill="#8d978f" font-size="7.5" font-family="Montserrat" text-anchor="middle"><text x="${(x0+x1)/2}" y="${y0+fh+22}">${D.l} mm (${D.f})</text><text x="${x0-14}" y="${y0+3}" transform="rotate(-90 ${x0-14} ${y0+3})">\u00d8 ${D.d}</text></g>`}
+ else s+=`<text x="${x0}" y="124" fill="#6b756d" font-size="7" font-family="Montserrat">PROPORTIONS ILLUSTRATIVE</text>`;
+ return s+'</svg>'};
+const G={f:'All'};
+const ANAMX=`<div class="card"><h2>Anamorphic Lenses</h2><p class="mut">Cylindrical elements squeeze the image horizontally by a factor s (1.3, 1.33, 1.5, 1.8 or 2). The footage is de-squeezed in post or on the monitor.</p><div class="tw"><table class="sp"><tr><td>Horizontal FOV</td><td>2 \u00b7 atan( s \u00b7 w / 2f )</td></tr><tr><td>Vertical FOV</td><td>2 \u00b7 atan( h / 2f ), same as a spherical lens</td></tr><tr><td>Delivered aspect</td><td>s \u00b7 w / h (e.g. 2\u00d7 on 27.99 \u00d7 19.22 mm gives 2.91:1)</td></tr><tr><td>Horizontal framing equals</td><td>a spherical lens of f / s (50 mm 2\u00d7 frames like 25 mm horizontally)</td></tr></table></div><ul><li>The calculator applies the squeeze to horizontal FOV only. Depth of field uses the real focal length and the T-stop.</li><li>Real anamorphics focus differently in the two axes (astigmatic focus), so no calculator models their DoF exactly. Confirm critical shots with a test.</li><li>Typical optical character: oval bokeh, horizontal streak flares, stronger breathing and barrel distortion.</li><li>Front-anamorphic designs put the cylindrical group in front of the spherical lens. Rear-anamorphic and variable-squeeze designs put it behind or inside.</li></ul></div>`;
+function guide(){
+ const all=sers(),ok=s=>G.f==='All'||(G.f==='Zoom'&&s.z)||(G.f==='Anamorphic'&&s.q>1&&!s.z)||(G.f==='Spherical'&&!s.z&&!(s.q>1));
+ $('#guide').innerHTML=`<div class="card"><h2>Lens Anatomy</h2>${ANAT}</div>`+(G.f==='Anamorphic'?ANAMX:'')+`<div class="card"><h2>Lens Guide</h2><div class="seg" style="margin:8px 0">${['All','Spherical','Anamorphic','Zoom'].map(k=>`<button data-a="gf" data-v="${k}" class="${G.f===k?'on':''}">${k}</button>`).join('')}</div><p class="mut">Specs come from manufacturer datasheets and retailer listings. A dash means the value was not verified, so nothing is guessed. Element and group counts are not published in the sources checked.</p>`+all.map((s,i)=>{
+  if(!ok(s))return '';
+  const I=INFO[s.n]||{},fl=s.L.map(l=>l[0]),mn=Math.min(...s.L.map(l=>l[1])),mx=Math.max(...s.L.map(l=>l[1])),ty=I.ty||(s.z?'Zoom':s.q>1?'Anamorphic prime, '+s.q+'\u00d7 squeeze':'Spherical prime');
+  const rows=[['Type',ty],['Focal length',s.z?fl[0]+'\u2013'+fl[1]+' mm':fl.join(', ')+' mm'],['Max aperture','T'+mn+(mx>mn?' (to T'+mx+')':'')],['Mount',I.mt||'\u2014'],['Coverage',I.cv||'\u2014'],['Iris',I.ir||'\u2014'],['Front diameter',I.fd||'\u2014'],['Elements / groups','\u2014 (not published in sources checked)']];
+  const tb=s.z?'':`<div class="tw"><table><tr><th>mm</th><th>T</th><th>Close focus</th></tr>${s.L.map(l=>`<tr><td>${l[0]}</td><td>${l[1]}</td><td>${(I.mod&&I.mod[l[0]])||'\u2014'}</td></tr>`).join('')}</table></div>`;
+  return `<details class="gd"><summary><b>${esc(s.n)}</b><span>${s.z?fl[0]+'\u2013'+fl[1]+' mm zoom':fl[0]+'\u2013'+fl[fl.length-1]+' mm'} \u00b7 T${mn}${s.q>1?' \u00b7 '+s.q+'\u00d7':''}</span></summary>${extSvg(s)}<div class="tw"><table class="sp">${rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')}</table></div>${tb}${I.ft?'<ul>'+I.ft.map(x=>`<li>${x}</li>`).join('')+'</ul>':'<p class="mut">Detailed specs for this series have not been verified yet.</p>'}${I.nt?`<p class="mut">${I.nt}</p>`:''}<button class="ld" data-a="ps" data-v="${i}">Use in calculator</button></details>`}).join('')+'</div>';
+}
+$('#sq').addEventListener('input',e=>{S.sq=+e.target.value;R()});$('#mod').addEventListener('input',e=>{S.mod=parseFloat(e.target.value)||0;R()});
+const ASPL=['Sensor','16:9','1.85','2.00','2.39','4:3','1:1','9:16'],AVL={'16:9':16/9,'1.85':1.85,'2.00':2,'2.39':2.39,'4:3':4/3,'1:1':1,'9:16':9/16};
+let VS={cam:0,ser:-1,focal:35,asp:'Sensor',grid:1,ph:24,sq:1,asp0:1},vstream=null,vopen=0;
+try{const q=JSON.parse(localStorage.getItem('dofvf')||'{}');VS.asp=q.asp||VS.asp;VS.grid=q.grid==null?1:q.grid;VS.ph=q.ph||24}catch(e){}
+function VR(){
+ const C=cams()[VS.cam]||cams()[0],all=sers(),sr=VS.ser>=0?all[VS.ser]:null;
+ if(sr&&sr.z)VS.focal=Math.min(sr.L[1][0],Math.max(sr.L[0][0],VS.focal));else if(sr&&!sr.L.some(l=>l[0]===VS.focal))VS.focal=sr.L.reduce((b,l)=>Math.abs(l[0]-VS.focal)<Math.abs(b[0]-VS.focal)?l:b)[0];
+ const f=VS.focal,q=sr&&!sr.z?sr.q:VS.sq,D=Math.PI/180,hf=2*Math.atan(C.w*q/(2*f))/D,vfv=2*Math.atan(C.h/(2*f))/D,AR=C.w*q/C.h,eq=f*43.27/Math.hypot(C.w,C.h);
+ $('#vc').textContent=C.n;$('#vl').textContent=(sr?sr.n+' · ':'')+f+' mm  ('+eq.toFixed(0)+' mm FF eq.)';$('#vh').textContent='H '+hf.toFixed(1)+'° · V '+vfv.toFixed(1)+'°';$('#va').textContent=C.w+' × '+C.h+' mm'+(q>1?' · '+q+'× squeeze':'');
+ $('#vcam').value=VS.cam;$('#vser').value=VS.ser;$('#vph').value=VS.ph;$('#vsq').value=String(q);$('#vsq').disabled=!!sr&&!sr.z;
+ const st=$('#vstage'),W=st.clientWidth-8,H=st.clientHeight-8;let w=W,hh=W/AR;if(hh>H){hh=H;w=H*AR}
+ const fr=$('#vfr');fr.style.width=w+'px';fr.style.height=hh+'px';fr.className='g'+VS.grid;
+ const B=VS.asp==='Sensor'?AR:AVL[VS.asp];let iw=100,ih=100;if(B>AR)ih=AR/B*100;else iw=B/AR*100;
+ $('#vrl').style.width=iw+'%';$('#vrl').style.height=ih+'%';$('#vrt').textContent=VS.asp==='Sensor'?AR.toFixed(2)+' : 1  SENSOR':VS.asp;
+ const m=!$('#vv').hidden?$('#vv'):$('#vi'),mw=m.videoWidth||m.naturalWidth||1600,mh=m.videoHeight||m.naturalHeight||900,ar=mw/mh;
+ const h0=2*Math.atan(36/(2*VS.ph)),hw=2*Math.atan(Math.tan(h0/2)*Math.min(1,ar)),z=Math.tan(hw/2)/Math.tan(hf*D/2),vw=w*z,vh=vw/ar;
+ [$('#vv'),$('#vi')].forEach(e=>{e.style.width=vw+'px';e.style.height=vh+'px'});
+ $('#vwarn').hidden=vh>=hh-1&&vw>=w-1;
+ const pr=sr&&!sr.z;$('#vch').hidden=!pr;$('#vfs').hidden=!!pr;
+ if(pr)$('#vch').innerHTML=sr.L.map(l=>`<button class="chip ${l[0]===f?'on':''}" data-f="${l[0]}">${l[0]}</button>`).join('');
+ else{$('#vfs').min=sr?sr.L[0][0]:8;$('#vfs').max=sr?sr.L[1][0]:300;$('#vfs').value=f}
+ $('#vasp').textContent='Frame '+VS.asp;$('#vgr').textContent='Grid '+VS.grid;
+ try{localStorage.setItem('dofvf',JSON.stringify({asp:VS.asp,grid:VS.grid,ph:VS.ph}))}catch(e){}
+}
+const vmsg=t=>{$('#vmsg').hidden=false;$('#vmsg').textContent=t};
+function vstop(){if(vstream){vstream.getTracks().forEach(t=>t.stop());vstream=null}}
+async function vstart(){
+ if(vstream)return;const md=navigator.mediaDevices;
+ if(!md||!md.getUserMedia){vmsg('Live camera needs HTTPS. Tap Photo.');return}
+ try{let s;try{s=await md.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false})}catch(e){if(e.name==='OverconstrainedError')s=await md.getUserMedia({video:true,audio:false});else throw e}
+  vstream=s;const v=$('#vv');v.srcObject=s;v.hidden=false;$('#vi').hidden=true;$('#vmsg').hidden=true;await v.play().catch(()=>{});VR()}
+ catch(e){vmsg('Camera blocked ('+e.name+'). Allow the camera for this page, open it in Safari or Chrome, or tap Photo.')}
+}
+Object.assign(A,{vopen:()=>{VS.cam=S.cam;VS.ser=S.ser;VS.focal=S.focal;VS.sq=S.sq||1;$('#vcam').innerHTML=$('#cam').innerHTML;$('#vser').innerHTML=$('#ser').innerHTML;$('#vf').hidden=false;vopen=1;VR();vstart()}});
+$('#vx').onclick=()=>{vstop();$('#vf').hidden=true;vopen=0};
+$('#vcm').onclick=()=>{vstop();vstart()};
+$('#vcam').oninput=e=>{VS.cam=+e.target.value;VR()};
+$('#vser').oninput=e=>{VS.ser=+e.target.value;VR()};
+$('#vfs').oninput=e=>{VS.focal=+e.target.value;VR()};
+$('#vph').oninput=e=>{VS.ph=+e.target.value;VR()};$('#vsq').oninput=e=>{VS.sq=+e.target.value;VR()};
+$('#vasp').onclick=()=>{VS.asp=ASPL[(ASPL.indexOf(VS.asp)+1)%ASPL.length];VR()};
+$('#vgr').onclick=()=>{VS.grid=(VS.grid+1)%3;VR()};
+$('#vch').onclick=e=>{const b=e.target.closest('[data-f]');if(b){VS.focal=+b.dataset.f;VR()}};
+$('#vphoto').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;vstop();const i=$('#vi');i.onload=VR;i.src=URL.createObjectURL(f);i.hidden=false;$('#vv').hidden=true;$('#vmsg').hidden=true});
+$('#vv').addEventListener('loadedmetadata',VR);addEventListener('resize',()=>vopen&&VR());
+buildSel();sync();R();
+const sp=$('#splash'),hide=()=>{sp.classList.add('out');setTimeout(()=>sp.remove(),900)};
+const ST=[1.3,1.4,1.8,2,2.8,4,5.6,8,11,16,22];$('#tk').innerHTML=ST.map(()=>'<i></i>').join('');const ir=$('#ir'),P=(r,a)=>{a=(a-90)*Math.PI/180;return (60+r*Math.cos(a)).toFixed(1)+','+(60+r*Math.sin(a)).toFixed(1)};
+const draw=ro=>{let s='';for(let i=0;i<9;i++){const a0=40*i,a1=a0+40;s+=`<polygon points="${P(ro,a0)} ${P(ro,a1)} ${P(51,a1+22)} ${P(51,a0+22)}"/>`}ir.querySelector('g').innerHTML=s};
+let raf;const t0=performance.now();
+const tick=n=>{const t=Math.min(1,(n-t0)/3300),T=1.3*Math.pow(22/1.3,t);draw(Math.max(2.5,43*1.3/T));let si=0;ST.forEach((v,j)=>{if(T>=v-.001)si=j});if(t>=1)si=ST.length-1;$('#tn').textContent='T'+ST[si];document.querySelectorAll('#tk i').forEach((d,j)=>d.classList.toggle('on',j<=si));if(t<1)raf=requestAnimationFrame(tick);else setTimeout(hide,500)};
+raf=requestAnimationFrame(tick);sp.addEventListener('click',()=>{cancelAnimationFrame(raf);hide()});
+</script><script>if('serviceWorker' in navigator&&/^https?:/.test(location.protocol))addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));</script></body></html>
